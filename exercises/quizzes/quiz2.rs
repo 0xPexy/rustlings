@@ -27,7 +27,51 @@ mod my_module {
     use super::Command;
 
     // TODO: Complete the function as described above.
-    // pub fn transformer(input: ???) -> ??? { ??? }
+    pub fn transformer(input: Vec<(String, Command)>) -> Vec<String> {
+        let mut out: Vec<String> = Vec::new();
+        for (s, c) in input {
+            match c {
+                Command::Uppercase => {
+                    out.push(s.to_uppercase());
+                }
+                Command::Trim => {
+                    out.push(s.trim().to_string());
+                }
+                Command::Append(u) => {
+                    let mut s2 = s;
+                    for _i in 0..u {
+                        s2 += &String::from("bar");
+                    }
+                    out.push(s2);
+                }
+            }
+        }
+        out
+    }
+
+    pub fn transformer2(input: Vec<(String, Command)>) -> Vec<String> {
+        let mut out: Vec<String> = Vec::new();
+        for (s, c) in input {
+            let st = match c {
+                Command::Uppercase => s.to_uppercase(),
+                Command::Trim => s.trim().to_string(),
+                Command::Append(u) => s + &String::from("bar").repeat(u),
+            };
+            out.push(st);
+        }
+        out
+    }
+
+    pub fn transformer3(input: Vec<(String, Command)>) -> Vec<String> {
+        input
+            .into_iter()
+            .map(|(s, c)| match c {
+                Command::Uppercase => s.to_uppercase(),
+                Command::Trim => s.trim().to_string(),
+                Command::Append(u) => s + &String::from("bar").repeat(u),
+            })
+            .collect()
+    }
 }
 
 fn main() {
@@ -37,8 +81,8 @@ fn main() {
 #[cfg(test)]
 mod tests {
     // TODO: What do we need to import to have `transformer` in scope?
-    // use ???;
     use super::Command;
+    use super::my_module::transformer3;
 
     #[test]
     fn it_works() {
@@ -48,7 +92,7 @@ mod tests {
             ("foo".to_string(), Command::Append(1)),
             ("bar".to_string(), Command::Append(5)),
         ];
-        let output = transformer(input);
+        let output = transformer3(input);
 
         assert_eq!(
             output,
